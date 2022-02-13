@@ -21,6 +21,14 @@ public:
         return bloques.size();
     }
 
+    Bloque<Transaccion<float>> retornarBloque(int index)
+    {
+        auto it = bloques.begin();
+        advance(it, index);
+        cout << "Retornando bloque..." << endl;
+        return (*it);
+    }
+
     // void AgregarUsuario(U usuario)
     // {
     //     this->usuarios.push_back(usuario);

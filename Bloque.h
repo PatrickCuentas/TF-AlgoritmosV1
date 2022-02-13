@@ -27,6 +27,7 @@ struct Bloque
 
     int getNumeroTransacciones()
     {
+        cout << "Numero de transacciones: " << this->transacciones.size() << endl;
         return this->transacciones.size();
     }
 

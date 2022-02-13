@@ -20,12 +20,17 @@ public:
 
     void getCantidadBloques()
     {
-        cout << "Cantidad de bloques " << bc->getCantidadBloques()<<endl;
+        cout << "Cantidad de bloques " << bc->getCantidadBloques() << endl;
     }
 
     void insertarBloque()
     {
         bc->insertarBloque();
+    }
+
+    Bloque<Transaccion<float>> retornarBloque(int index)
+    {
+        return bc->retornarBloque(index);
     }
 
     void ingresarTransaccion(int index, string emisor, string receptor, float monto)

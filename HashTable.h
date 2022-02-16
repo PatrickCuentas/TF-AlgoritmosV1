@@ -24,6 +24,7 @@ public:
     int getSize() {return this->size; }
 
     void set(Bloque block) {
+        
         string key = block.generarKey();
         if (size == 0)
             this->lastKeyGen = "00000000000";
@@ -37,7 +38,6 @@ public:
         }
         size_t hashcode = getHashCode(key);
         int index = hashcode % this->capacity;
-
         this->array[index].push_back(block);
         size++;
     }
@@ -79,9 +79,16 @@ public:
     void mostrarTransacciones()
     {
         for (int i = 0; i < capacity; ++i) {
-            //cout << "Bloque " << array[i].index << endl;
-            string output = (*array)[i].mostrarTransacciones();
-            cout << output;
+            cout << endl << "Lista" << endl;
+            for (auto bloque : this->array[i]) {
+                cout << "--------------------------------------" << endl;
+                cout<<"\tBloque " << bloque.getIndex()<< endl;
+                cout << "\tKey: " << bloque.getKey() << endl;
+                cout << "--------------------------------------" << endl;
+                cout << "\tTransacciones" << endl;
+                cout << bloque.mostrarTransacciones() << endl;
+            }
+            cout << endl;
         }
     }
 

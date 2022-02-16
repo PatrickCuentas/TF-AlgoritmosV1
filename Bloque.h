@@ -1,6 +1,5 @@
-#include <iostream>
 #include "double.h"
-#include "Transaccion.h"
+#include "Usuario.h"
 
 struct Bloque
 {
@@ -14,6 +13,9 @@ struct Bloque
     Bloque() {
         // key = hashFunction(key);
         limiteTransacciones = 5;
+        transacciones = nullptr;
+
+        transacciones = new DoubleList<Transaccion>();
     }
 
     int getNumeroTransacciones() { return this->transacciones->size(); }
@@ -28,11 +30,19 @@ struct Bloque
     }
 
     string mostrarTransacciones() {
+        if (this->transacciones == nullptr) {
+            return "Esto es nulo :)";
+        }
         string output = "";
-        for (auto it = transacciones->begin(); it != transacciones->end(); ++it) {
+        DoubleList<Transaccion>::Iterator it = transacciones->begin();
+        for (it; it != transacciones->end(); ++it) {
             output.append((*it).getString());
             output.append("\n");
         }
+        /*transacciones;
+        for (auto it : *transacciones) {
+            output = output + it.getString() + "\n";
+        }*/
         return output;
     }
 
@@ -53,5 +63,7 @@ struct Bloque
         this->index = _index;
     }
 
-    int getIndex() { return this->index; }
+    int getIndex() { return this->index + 1; }
+
+    string getKey() { return this->key; }
 };

@@ -23,7 +23,7 @@ void menuAdminTransaccion(BlockChain* myblockchain, string usersession) {
     double monto;
     int ope;
     int index = -1;
-    while (ope != 4) {
+    while (ope != 3) {
         system("clear");
         cout << "Bienvenid@," << usersession << "\n\n";
         cout << "Ingresar Transacciones";

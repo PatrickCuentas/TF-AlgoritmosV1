@@ -1,14 +1,15 @@
 #include <iostream>
-#include <list>
+#include "Transaccion.h"
 using namespace std;
-template <typename T>
 struct Usuario
 {
     string nombre;
-    list<T> transaccionesEmitidas;
-    list<T> transaccionesRecibidas;
-    Usuario(string _nombre)
+    DoubleList<Transaccion>* transaccionesEmitidas;
+    DoubleList<Transaccion>* transaccionesRecibidas;
+    Usuario(string _nombre = "")
     {
+        transaccionesEmitidas = new DoubleList<Transaccion>();
+        transaccionesRecibidas = new DoubleList<Transaccion>();
         nombre = _nombre;
     }
 };

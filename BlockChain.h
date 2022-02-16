@@ -1,81 +1,40 @@
-#include <iostream>
-#include <list>
 #include "Usuario.h"
-#include "Bloque.h"
-#include "Transaccion.h"
-using namespace std;
-class Blockchain
-{
-private:
-    list<Usuario<Transaccion<float>>> usuarios;
-    list<Bloque<Transaccion<float>>> bloques;
+#include "HashTable.h"
+#include "double.h"
 
-public:
-    Blockchain()
-    {
-        // cout << bloques.size() << endl;
+class BlockChain {
+    private:
+    DoubleList<Usuario<Transaccion>> usuarios;
+    //BSTree<Bloque<Transaccion>*>* porNombre;
+    //BSTree<Bloque<Transaccion>*>* porNonce; // rango inicial : 20-100 , puede salir repetidos, cada 5 o 10 repetidos aumentar el rango de 20 a 120
+    //BSTree<bloque<Transaccion>*>* por;
+
+    HashTable* hashTable;
+
+    public:
+    BlockChain() {
+        hashTable = new HashTable();
     }
 
-    int getCantidadBloques()
-    {
-        return bloques.size();
+    void setBlockinHashTable(Bloque bloque) {
+        hashTable->set(bloque);
     }
 
-    Bloque<Transaccion<float>> retornarBloque(int index)
-    {
-        auto it = bloques.begin();
-        advance(it, index);
-        cout << "Retornando bloque..." << endl;
-        return (*it);
+    int getHashSize() {
+        return hashTable->getSize();
     }
 
-    // void AgregarUsuario(U usuario)
-    // {
-    //     this->usuarios.push_back(usuario);
-    // }
-
-    void insertarBloque()
-    {
-        // TODO: Anadir un bloque
-        bloques.push_back(Bloque<Transaccion<float>>());
-        cout << "Bloque insertado correctamente..." << endl;
+    bool verificarExistenciaBloque(string key) {
+        return hashTable->keyExists(key);
     }
 
-    void ingresarTransaccion(int index, string emisor, string receptor, float monto)
+    void mostrarTodasLasTransacciones()
     {
-        auto it = bloques.begin();
-        advance(it, index);
-        // cout << "Numero de transacciones: ";
-        // (*it).getNumeroTransacciones();
-        // cout << endl;
-        // return;
-        (*it).ingresarTransaccion(Transaccion<float>(emisor, receptor, monto));
-        cout << "Transaccion ingresada al bloque " << index + 1 << " correctamente..." << endl;
+        hashTable->mostrarTransacciones();
     }
 
-    bool estaIndexado(int index)
+    Bloque retornarBloque(string key)
     {
-        auto it = bloques.begin();
-        advance(it, index);
-
-        return (*it).getEstaIndexado();
-    }
-
-    bool sePuedeIndexar(int index)
-    {
-        auto it = bloques.begin();
-        advance(it, index);
-        cout << (*it).getNumeroTransacciones();
-        return (*it).getNumeroTransacciones() >= 2;
-    }
-
-    void mostrarTransacciones()
-    {
-        int i = 1;
-        for (auto ite = bloques.begin(); ite != bloques.end(); ++ite, i++)
-        {
-            cout << "Bloque " << i << endl;
-            (*ite).mostrarTransacciones();
-        }
+        return hashTable->retornarBloque(key);
     }
 };

@@ -1,92 +1,57 @@
 #include <iostream>
-using namespace std;
+#include "double.h"
+#include "Transaccion.h"
 
-template <typename T>
 struct Bloque
 {
-    // private:
-    // Node<Bloque> *node;
-    bool estaIndexado;
+    Node<Bloque>* node;
     string key;
-    list<T> transacciones;
+    string prev_key;
+    int index;
+    DoubleList<Transaccion>* transacciones;
     int limiteTransacciones;
 
-    Bloque()
-    {
+    Bloque() {
         // key = hashFunction(key);
-        // index = key % capacity;
-        estaIndexado = false;
-        // key = " ";
         limiteTransacciones = 5;
     }
 
-    bool getEstaIndexado()
-    {
-        return estaIndexado;
-    }
-
-    int getNumeroTransacciones()
-    {
-        cout << "Numero de transacciones: " << this->transacciones.size() << endl;
-        return this->transacciones.size();
-    }
-
-    list<T> getLista()
-    {
-        return this->transacciones;
-    }
-
-    bool operator<(Bloque b)
-    {
-        // TODO:
-        return this->nota < b.nota;
-    }
-    bool operator>(Bloque b)
-    {
-        // TODO:
-        return this->nota < b.nota;
-    }
-
-    void ingresarTransaccion(T transaccion)
-    {
-        this->transacciones.push_back(transaccion);
-    }
-
-    void muestreAlgo()
-    {
-        cout << limiteTransacciones;
-    }
-
-    void indexarBloque()
-    {
-    }
-
-    void InsertarEnHashTable()
-    {
-
-        // TODO: Obtener una key en base a las transacciones
-
-        // TODO: Obtener el indice para insertar en la hashtable
-
-        // TODO: Llamar al metodo set de la hashtable con el indice y el bloque
-
-        // TODO:
-    }
-
-    void InsertarTransaccion(T transaccion)
-    {
-        if (this->transacciones.size() >= limiteTransacciones)
-            return; // manejar un error de "excediste el tamanio del bloque..."
-        this->transacciones.push_back(transaccion);
+    int getNumeroTransacciones() { return this->transacciones->size(); }
+    string returnKey() { return this->key; }
+     
+    void insertarTransaccion(Transaccion transaccion) {
+        //if (getNumeroTransacciones() >= this->limiteTransacciones)
+        //    return;
+        this->transacciones->push_back(transaccion);
         // TODO: Debo de insertar un puntero al arreglo o lista de transacciones del usuario que realizo la transaccion
-
         return;
     }
 
-    void mostrarTransacciones()
-    {
-        for (auto it = transacciones.begin(); it != transacciones.end(); ++it)
-            cout << *it << endl;
-        cout << '\n';
+    string mostrarTransacciones() {
+        string output = "";
+        for (auto it = transacciones->begin(); it != transacciones->end(); ++it) {
+            output.append((*it).getString());
+            output.append("\n");
+        }
+        return output;
     }
+
+    string generarKey() {
+        string temp_string = "000";
+        temp_string = temp_string + to_string(transacciones->back().getEmisor()[0]) + to_string(transacciones->back().getEmisor()[0] * 1);
+        temp_string = temp_string + to_string(transacciones->back().getReceptor()[0]) + to_string(transacciones->back().getReceptor()[0] * 1);
+        temp_string = temp_string + to_string(transacciones->back().getMonto())[0] + to_string(transacciones->back().getMonto())[1];
+        this->key = temp_string;
+        return temp_string;
+    }
+
+    void setPrevKey(string _prevkey) {
+        this->prev_key = _prevkey;
+    }
+
+    void setIndex(int _index) {
+        this->index = _index;
+    }
+
+    int getIndex() { return this->index; }
 };

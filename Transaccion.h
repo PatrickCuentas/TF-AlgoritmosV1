@@ -1,21 +1,40 @@
-#include <fstream>
+#include <string>
 using namespace std;
-template <typename M>
+
 struct Transaccion
 {
     string emisor;
     string receptor;
-    M monto;
-    Transaccion(string _emisor, string _receptor, M _monto)
+    float monto;
+
+    Transaccion() {
+        emisor = "";
+        receptor = "";
+        monto = 0.0;
+    }
+
+    Transaccion(string _emisor, string _receptor, float _monto)
     {
         emisor = _emisor;
         receptor = _receptor;
         monto = _monto;
     }
+    string getString() {
+        string output = "";
+        output.append(to_string(monto));
+        output.append("\t");
+        output.append(emisor);
+        output.append("\t");
+        output.append(receptor);
+        return output;
+    }
+    string getEmisor() { return emisor; }
+    string getReceptor() { return receptor; }
+    float getMonto() { return monto; }
 };
-template <typename M>
-ostream &operator<<(ostream &o, const Transaccion<M> &p)
+
+/*ostream& operator<<(ostream& o, const Transaccion<float>& p)
 {
-    o << "(" << p.emisor << " -> " << p.monto << " -> " << p.receptor << ")";
+    o << "(" << p.monto << " -> " << p.emisor << " -> " << p.receptor << ")";
     return o;
-}
+}*/

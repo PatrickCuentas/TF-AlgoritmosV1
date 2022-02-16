@@ -1,12 +1,15 @@
-#include <string> 
+#include <iostream>
+#include <string>
+
 using namespace std;
 
-struct Transaccion
+class Transaccion
 {
+private:
     string emisor;
     string receptor;
     float monto;
-
+public:
     Transaccion() {
         emisor = "";
         receptor = "";

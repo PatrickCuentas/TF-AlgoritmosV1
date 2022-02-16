@@ -1,10 +1,8 @@
-#include "Usuario.h"
 #include "HashTable.h"
-#include "double.h"
 
 class BlockChain {
     private:
-    DoubleList<Usuario<Transaccion>> usuarios;
+    DoubleList<Usuario>* usuarios;
     //BSTree<Bloque<Transaccion>*>* porNombre;
     //BSTree<Bloque<Transaccion>*>* porNonce; // rango inicial : 20-100 , puede salir repetidos, cada 5 o 10 repetidos aumentar el rango de 20 a 120
     //BSTree<bloque<Transaccion>*>* por;
@@ -14,6 +12,7 @@ class BlockChain {
     public:
     BlockChain() {
         hashTable = new HashTable();
+        usuarios = new DoubleList<Usuario>();
     }
 
     void setBlockinHashTable(Bloque bloque) {

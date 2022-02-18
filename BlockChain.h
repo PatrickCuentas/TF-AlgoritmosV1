@@ -94,77 +94,91 @@ class BlockChain {
     void filtradoUsuarios(int opc) {
         string nombre;
         char character;
+        bool seEncontro = false;
             switch (opc) {
             case 1:
                 cout << "\nIngrese nombre a buscar:";
                 cin >> nombre;
+                cout << "\n";
                 for (auto usuario : (*usuarios)) {
-                    primeraPalabra(nombre, usuario);
+                    primeraPalabra(nombre, usuario,&seEncontro);
                 }break;
             case 2:
                 cout << "\nIngrese primera letra:";
                 cin >> character;
+                cout << "\n";
                 for (auto usuario : (*usuarios)) {
-                    iniciaPalabra(character, usuario);
+                    iniciaPalabra(character, usuario,&seEncontro);
                 }
                 break;
             case 3:
                 cout << "\nIngrese ultima letra:";
                 cin >> character;
+                cout << "\n";
                 for (auto usuario : (*usuarios)) {
-                    ultimaPalabra(character, usuario);
+                    ultimaPalabra(character, usuario,&seEncontro);
                 }
                 break;
             case 4:
                 cout << "\nIngrese letra/s contenidas en:";
                 cin >> nombre;
+                cout << "\n";
                 for (auto usuario : (*usuarios)) {
-                    mediasPalabras(nombre, usuario);
+                    mediasPalabras(nombre, usuario,&seEncontro);
                 }
                 break;
             case 5:
                 cout << "\nIngrese letra/s no contenidas en:";
                 cin >> nombre;
+                cout << "\n";
                 for (auto usuario : (*usuarios)) {
-                    noMediasPalabras(nombre, usuario);
+                    noMediasPalabras(nombre, usuario,&seEncontro);
                 }
                 break;
                 default:
                 break;
             }
-            cout << endl;
+            if (!seEncontro) {
+                cout <<  "\n\nNO EXISTEN RESULTADOS PARA EL FILTRO DADO";
+            }
+            cout << endl; system("pause");
         }
     
 
-    void primeraPalabra(string palabra, Usuario usuario) {
+    void primeraPalabra(string palabra, Usuario usuario,bool *seEncontro) {
 
         string nombre = usuario.getNombre();
         if (nombre == palabra) {
-            cout << usuario;
+            cout << usuario << endl;
+            *seEncontro = true;
         }
     }
-    void iniciaPalabra(char letraInicial, Usuario usuario) {
+    void iniciaPalabra(char letraInicial, Usuario usuario, bool* seEncontro) {
         string nombre = usuario.getNombre();
         if (toupper(nombre[0]) == toupper(letraInicial)) {
-            cout << usuario;
+            cout << usuario << endl;
+            *seEncontro = true;
         }
     }
-    void ultimaPalabra(char letraFinal, Usuario usuario) {
+    void ultimaPalabra(char letraFinal, Usuario usuario, bool* seEncontro) {
         string nombre = usuario.getNombre();
         if (nombre[nombre.length() - 1] == letraFinal) {
-            cout << usuario;
+            cout << usuario << endl;
+            *seEncontro = true;
         }
     }
-    void mediasPalabras(string letrasMedias, Usuario usuario) {
+    void mediasPalabras(string letrasMedias, Usuario usuario, bool* seEncontro) {
         string nombre = usuario.getNombre();
         if (nombre.rfind(letrasMedias) != string::npos) {
-            cout << usuario;
+            cout << usuario<<endl;
+            *seEncontro = true;
         }
     }
-    void noMediasPalabras(string noLetrasMedias, Usuario usuario) {
+    void noMediasPalabras(string noLetrasMedias, Usuario usuario, bool* seEncontro) {
         string nombre = usuario.getNombre();
         if (nombre.rfind(noLetrasMedias) == string::npos) {
-            cout << usuario;
+            cout << usuario << endl;
+            *seEncontro = true;
         }
     }
 

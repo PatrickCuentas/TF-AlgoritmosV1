@@ -118,17 +118,24 @@ public:
 
     bool remove(int pos)
     {
+        int size = this->size();
         if (this->is_empty())
             return false;
         Node<T>* temp = this->head;
-        while (temp->next != _find(pos))
-        {
-            temp = temp->next;
+        if (size > 1) {
+            while (temp && temp->next != _find(pos))
+            {
+                temp = temp->next;
+            }
+            Node<T>* temp2 = temp->next;
+            temp->next = temp2->next;
+            delete temp2;
+            this->nodes--;
         }
-        Node<T>* temp2 = temp->next;
-        temp->next = temp2->next;
-        delete temp2;
-        this->nodes--;
+        else {
+            this->pop_front();
+        }
+        
         return true;
     }
 
@@ -141,72 +148,47 @@ public:
         throw("no implementado");
     }
 
-    class Iterator
-    {
+    class Iterator{
         Node<T>* v;
         int pos;
 
     public:
-        Iterator(Node<T>* v, int pos)
-        {
+        Iterator(Node<T>* v, int pos) {
             this->v = v;
             this->pos = pos;
         }
 
-        void operator++()
-        {
+        void operator++() {
             v = v->next;
             pos++;
         }
-        void operator--()
-        {
+        void operator--() {
             v = v->prev;
             pos--;
         }
-        T operator*()
-        {
-            return v->data;
-        }
-        bool operator!=(Iterator i)
-        {
-            return pos != i.pos;
-        }
+
+        T operator*() { return v->data; }
+
+        bool operator!=(Iterator i) { return pos != i.pos; }
     };
 
-    Iterator begin()
-    {
-        return Iterator(this->head, 0);
-    }
+    Iterator begin() { return Iterator(this->head, 0); }
 
-    Iterator end()
-    {
-        return Iterator(nullptr, this->nodes);
-    }
+    Iterator end() { return Iterator(nullptr, this->nodes); }
 
-    Iterator rbegin()
-    {
-        return Iterator(this->tail, this->nodes - 1);
-    }
+    Iterator rbegin() { return Iterator(this->tail, this->nodes - 1); }
 
-    Iterator rend()
-    {
-        return Iterator(nullptr, -1);
-    }
+    Iterator rend() { return Iterator(nullptr, -1); }
 
-    bool is_empty()
-    {
+    bool is_empty(){
         return this->head == nullptr && this->tail == nullptr;
     }
 
-    int size()
-    {
-        return this->nodes;
-    }
+    int size(){ return this->nodes;}
 
-    Node<T>* _find(int index)
-    {
+    Node<T>* _find(int index){
         if (index > this->size())
-            throw("Posicion no valida");
+            return nullptr;
         Node<T>* current = this->head;
         for (int i = 0; i < index; i++)
         {

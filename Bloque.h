@@ -12,9 +12,10 @@ struct Bloque
 
     Bloque() {
         // key = hashFunction(key);
+        prev_key = "00000000000";
         limiteTransacciones = 5;
         transacciones = nullptr;
-
+        node = nullptr;
         transacciones = new DoubleList<Transaccion>();
     }
 
@@ -24,8 +25,9 @@ struct Bloque
     void insertarTransaccion(Transaccion transaccion) {
         //if (getNumeroTransacciones() >= this->limiteTransacciones)
         //    return;
-        this->transacciones->push_back(transaccion);
+         this->transacciones->push_back(transaccion);
         // TODO: Debo de insertar un puntero al arreglo o lista de transacciones del usuario que realizo la transaccion
+        // TODO: se debe actualizar la key cada vez que se inserte una transaccion
         return;
     }
 
@@ -47,15 +49,40 @@ struct Bloque
     }
 
     string generarKey() {
-        string temp_string = "000";
-        temp_string = temp_string + to_string(transacciones->back().getEmisor()[0]) + to_string(transacciones->back().getEmisor()[0] * 1);
-        temp_string = temp_string + to_string(transacciones->back().getReceptor()[0]) + to_string(transacciones->back().getReceptor()[0] * 1);
-        temp_string = temp_string + to_string(transacciones->back().getMonto())[0] + to_string(transacciones->back().getMonto())[1];
-        this->key = temp_string;
-        return temp_string;
+        string temp_string;
+        temp_string = "000";
+       
+        temp_string = temp_string + (char)transacciones->back().getEmisor()[0];
+        temp_string = temp_string + to_string((transacciones->back().getEmisor()[0] * 1)% 100) ;
+
+        temp_string = temp_string + (char)transacciones->back().getReceptor()[0];
+        temp_string = temp_string + to_string((transacciones->back().getReceptor()[0] * 1)% 100) ;
+
+        float temp_monto = transacciones->back().getMonto();
+        string string_monto = to_string(temp_monto);
+        temp_string = temp_string + string_monto[0] + string_monto[1];
+
+        string nuevaKey;
+        nuevaKey.resize(11);
+
+        int num;
+        for (int i = 0; i < 11; i++) {
+            //num = (temp_string[i] + prev_key[i])/2;
+            num = temp_string[i] + prev_key[i];
+            if (i % 2 == 0)
+                num = 48 + num % 10;
+            else
+                num = 65 + num % 25;
+            nuevaKey[i] = char(num);
+
+           
+        }
+
+        return nuevaKey;
+        //this->key = temp_string;;
     }
 
-    void setPrevKey(string _prevkey) {
+    void setPrevKey(string _prevkey = "00000000000") {
         this->prev_key = _prevkey;
     }
 

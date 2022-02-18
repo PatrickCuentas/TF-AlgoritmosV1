@@ -40,4 +40,4 @@ public:
 {
     o << "(" << p.monto << " -> " << p.emisor << " -> " << p.receptor << ")";
     return o;
-}*/
+}*s/

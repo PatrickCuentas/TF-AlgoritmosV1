@@ -1,183 +1,171 @@
-#include "Bloque.h"
+#include "HashTable.h"
+class BlockChain {
+    private:
+        DoubleList<Usuario>* usuarios;
+    //BSTree<Bloque<Transaccion>*>* porNombre;
+    //BSTree<Bloque<Transaccion>*>* porNonce; // rango inicial : 20-100 , puede salir repetidos, cada 5 o 10 repetidos aumentar el rango de 20 a 120
+    //BSTree<bloque<Transaccion>*>* por;
+        HashTable* hashTable;
 
-const int maxColision = 3;
-const float maxFillFactor = 0.5;
-
-class HashTable
-{
-private:
-    DoubleList<Bloque>* array;
-    int capacity; // tamanio del array
-    int size;   // cantidad de elementos totales
-    string lastKeyGen;
-
-public:
-    HashTable() {
-        this->capacity = 10;
-        this->array = new DoubleList<Bloque>[capacity];
-        this->size = 0;
+    public:
+    BlockChain() {
+        hashTable = new HashTable();
+        usuarios = new DoubleList<Usuario>();
     }
 
-    void setCapacity(int c) { this->capacity = c; }
-    int getCapacity() { return this->capacity; }
-    int getSize() {return this->size; }
-    
-
-    Bloque recalcularHash(Bloque block) {
-        Bloque temp = block;
-        remove(block.key); //buscas el indice mediante esta key y lo remueves de la hash table
-        string key = temp.generarKey();
-        temp.key = key;
-        size_t hashcode = getHashCode(key);
-        int index = hashcode % this->capacity;
-        this->array[index].push_back(temp);
-        this->array;
-        size++;
-        //set(temp);
-        return temp;
+    string setBlockinHashTable(Bloque bloque) {
+        return hashTable->set(bloque);
     }
 
-    void remove(string key){
-        size_t hashcode = getHashCode(key);
-        int index = hashcode % capacity;
-        int posKey = -1;
-        bool seEncontro = false;
-        for (auto it = this->array[index].begin();!seEncontro && it != this->array[index].end(); ++it) {\
-            ++posKey;
-            if ((*it).key == key) {
-                seEncontro = true;
+    Bloque recalcularHash(Bloque bloque) {
+        return hashTable->recalcularHash(bloque);
+    }
+
+    int getHashSize() {
+        return hashTable->getSize();
+    }
+
+    bool verificarExistenciaBloque(string key) {
+        return hashTable->keyExists(key);
+    }
+
+    void mostrarTodasLasTransacciones() {
+        hashTable->mostrarTransacciones();
+    }
+
+    void mostrarTodosLosUsuarios() {
+        int i = 1;
+        for (auto usuario : (*usuarios)) {
+            cout << "\tUsuario: " << i << ":\t" << usuario.getNombre() << endl;
+            i++;
+        }
+        cout << endl;
+    }
+
+    Bloque retornarBloque(string key)
+    {
+        return hashTable->retornarBloque(key);
+    }
+
+    string ingresarUsuario(Usuario user){
+        string temp_string = "";
+        for (auto usuario : (*usuarios)) {
+            if (user.getNombre() == usuario.getNombre()) {
+                temp_string = "\nEl usuario ya existe";
+                return temp_string;
             }
-            
         }
-        this->array[index].remove(posKey);
-        this->size--;
+        usuarios->push_back(user);
+        temp_string = "\nUsuario ingresado correctamente";
+        return temp_string;
     }
 
-    string set(Bloque block) { // aca insertamos un bloque en la hashtable
-        string key = block.generarKey(); //
-        block.key = key; 
+    //bool registroUsuario(string datos, string alias, string contra, int dinero) {
+    //    Usuario* nuevoU = buscarUsuario(usuarios, alias);
+    //    if (nuevoU != nullptr) {
+    //        cout << "\nUsuario ya registrado, ingrese un nuevo alias ";
+    //        return false;
+    //    }
+    //    nuevoU = new Usuario(datos, alias, contra, dinero);
+    //    usuarios.push_back(nuevoU);
+    //    return true;
+    //}
 
-        double factor = this->fillFactor();
-        if (fillFactor() >= maxFillFactor) {
-            rehashing();
-        }
-        size_t hashcode = getHashCode(key);
-        int index = hashcode % this->capacity;
-        this->array[index].push_back(block);
-        this->array;
-        size++;
-        return key;
-    }
-
-    size_t getHashCode(string key, string key_prev ="") {
-        size_t hash = 0;
-        for (int i = 0; i < key.length(); ++i)
-            hash = hash + (key[i] * 1) * i;
-        return hash;
-    }
-
-    bool keyExists(string key) {
-        size_t hashcode = getHashCode(key);
-        int index = hashcode % capacity;
-        for (auto it = array[index].begin(); it != array[index].end(); ++it) {
-            if ((*it).key == key) {
+    bool revisarUsuarioExistente(string nombre) {
+        for (auto usuario : (*usuarios)){
+            if (nombre == usuario.getNombre()) {
                 return true;
             }
         }
         return false;
     }
 
-    //Bloque get(string key)
-    //{
-    //    size_t hashcode = getHashCode(key);
-    //    int index = hashcode % this->capacity;
-    //    return searchInList(index, key);
-    //}
+    void ingresarTransaccionUsuario(Transaccion trans) {
+        buscaUsuario(trans.getEmisor()).ingresarTransaccionEmitida(trans);
+        buscaUsuario(trans.getReceptor()).ingresarTransaccionRecibida(trans);
+    }
 
-    void mostrarTransacciones(){
-        for (int i = 0; i < capacity; ++i) 
-            for (auto bloque : this->array[i]) {
-                cout << "--------------------------------------\n";
-                cout << "\nBloque #" << bloque.getIndex();
-                cout << "\tKey: " << bloque.getKey();
-                cout << "\nTransacciones:\n";
-                cout << "----------------\n";
-                cout << bloque.mostrarTransacciones() << endl;
+    Usuario buscaUsuario(string nombre) {
+        for (auto usuario : (*usuarios))
+            if (nombre == usuario.getNombre())
+                return usuario;
+    }
+
+    void filtradoUsuarios(int opc) {
+        string nombre;
+        char character;
+            switch (opc) {
+            case 1:
+                cout << "\nIngrese nombre a buscar:";
+                cin >> nombre;
+                for (auto usuario : (*usuarios)) {
+                    primeraPalabra(nombre, usuario);
+                }break;
+            case 2:
+                cout << "\nIngrese primera letra:";
+                cin >> character;
+                for (auto usuario : (*usuarios)) {
+                    iniciaPalabra(character, usuario);
+                }
+                break;
+            case 3:
+                cout << "\nIngrese ultima letra:";
+                cin >> character;
+                for (auto usuario : (*usuarios)) {
+                    ultimaPalabra(character, usuario);
+                }
+                break;
+            case 4:
+                cout << "\nIngrese letra/s contenidas en:";
+                cin >> nombre;
+                for (auto usuario : (*usuarios)) {
+                    mediasPalabras(nombre, usuario);
+                }
+                break;
+            case 5:
+                cout << "\nIngrese letra/s no contenidas en:";
+                cin >> nombre;
+                for (auto usuario : (*usuarios)) {
+                    noMediasPalabras(nombre, usuario);
+                }
+                break;
+                default:
+                break;
             }
-    }
+            cout << endl;
+        }
+    
 
-    float bucket_count()
-    {
-        return this->size;
-    }
+    void primeraPalabra(string palabra, Usuario usuario) {
 
-    Bloque operator[](int index)
-    {
-        return array->_find(index)->data;
+        string nombre = usuario.getNombre();
+        if (nombre == palabra) {
+            cout << usuario;
+        }
     }
-
-    auto begin(int i)
-    {
-        return this->array[i].begin();
+    void iniciaPalabra(char letraInicial, Usuario usuario) {
+        string nombre = usuario.getNombre();
+        if (toupper(nombre[0]) == toupper(letraInicial)) {
+            cout << usuario;
+        }
     }
-    auto end(int i)
-    {
-        return this->array[i].end();
+    void ultimaPalabra(char letraFinal, Usuario usuario) {
+        string nombre = usuario.getNombre();
+        if (nombre[nombre.length() - 1] == letraFinal) {
+            cout << usuario;
+        }
     }
-
-    int bucket_size(int index)
-    {
-        return this->array[index].size();
+    void mediasPalabras(string letrasMedias, Usuario usuario) {
+        string nombre = usuario.getNombre();
+        if (nombre.rfind(letrasMedias) != string::npos) {
+            cout << usuario;
+        }
     }
-
-    Bloque retornarBloque(string key) {
-        size_t hashcode = getHashCode(key);
-        int index = hashcode % capacity;
-        Bloque temp = searchInList(index, key);
-        return temp;
-    }
-        
-    Bloque searchInList(int index, string key)
-    {
-        int tamanio = array[index].size();
-        tamanio;
-        for (auto it = array[index].begin(); it != array[index].end(); ++it) {
-            *it;
-            if ((*it).key == key) {
-                return *it;
-            }
+    void noMediasPalabras(string noLetrasMedias, Usuario usuario) {
+        string nombre = usuario.getNombre();
+        if (nombre.rfind(noLetrasMedias) == string::npos) {
+            cout << usuario;
         }
     }
 
-private:
-    float fillFactor()
-    {
-        return size / (capacity * maxColision);
-    }
-
-    void rehashing()
-    {
-        cout << "rehashing" << endl;
-        DoubleList<Bloque>* array2 = new DoubleList<Bloque>[this->capacity * 2];
-
-        //for (int i = 0; i < this->capacity; ++i)
-        //{
-        // 
-        //    for (auto iter = this->array[i].begin(); iter != this->array[i].end(); ++iter)
-        //    {
-        //        if (!iter->isEmpty())
-        //        {
-        //            size_t hashcode = getHashCode((*iter).key);
-        //            int index = hashcode % (this->capacity * 2);
-        //            array2[index].push_back(Bloque((*iter).key, (*iter).value));
-        //        }
-        //    }
-        //}
-
-        setCapacity(this->capacity * 2);
-        delete[] array;
-        array = array2;
-    }
 };
-
-

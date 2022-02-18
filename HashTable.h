@@ -1,4 +1,3 @@
-#include "double.h"
 #include "Bloque.h"
 
 const int maxColision = 3;
@@ -22,15 +21,41 @@ public:
     void setCapacity(int c) { this->capacity = c; }
     int getCapacity() { return this->capacity; }
     int getSize() {return this->size; }
+    
 
-    void set(Bloque block) {
-        
-        string key = block.generarKey();
-        if (size == 0)
-            this->lastKeyGen = "00000000000";
-        else this->lastKeyGen = key;
+    Bloque recalcularHash(Bloque block) {
+        Bloque temp = block;
+        remove(block.key); //buscas el indice mediante esta key y lo remueves de la hash table
+        string key = temp.generarKey();
+        temp.key = key;
+        size_t hashcode = getHashCode(key);
+        int index = hashcode % this->capacity;
+        this->array[index].push_back(temp);
+        this->array;
+        size++;
+        //set(temp);
+        return temp;
+    }
 
-        block.setPrevKey(lastKeyGen);
+    void remove(string key){
+        size_t hashcode = getHashCode(key);
+        int index = hashcode % capacity;
+        int posKey = -1;
+        bool seEncontro = false;
+        for (auto it = this->array[index].begin();!seEncontro && it != this->array[index].end(); ++it) {\
+            ++posKey;
+            if ((*it).key == key) {
+                seEncontro = true;
+            }
+            
+        }
+        this->array[index].remove(posKey);
+        this->size--;
+    }
+
+    string set(Bloque block) { // aca insertamos un bloque en la hashtable
+        string key = block.generarKey(); //
+        block.key = key; 
 
         double factor = this->fillFactor();
         if (fillFactor() >= maxFillFactor) {
@@ -39,10 +64,12 @@ public:
         size_t hashcode = getHashCode(key);
         int index = hashcode % this->capacity;
         this->array[index].push_back(block);
+        this->array;
         size++;
+        return key;
     }
 
-    size_t getHashCode(string key) {
+    size_t getHashCode(string key, string key_prev ="") {
         size_t hash = 0;
         for (int i = 0; i < key.length(); ++i)
             hash = hash + (key[i] * 1) * i;
@@ -51,45 +78,32 @@ public:
 
     bool keyExists(string key) {
         size_t hashcode = getHashCode(key);
-        int index = hashcode % this->capacity;
-
-        //if (array[index].generarKey() == key)
-        if (array->_find(index)->data.generarKey() == key)
-            return true;
-        else
-            return false;
+        int index = hashcode % capacity;
+        for (auto it = array[index].begin(); it != array[index].end(); ++it) {
+            if ((*it).key == key) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    Bloque* searchInList(int index, string key)
-    {
-        //array->_find()
-    }
+    //Bloque get(string key)
+    //{
+    //    size_t hashcode = getHashCode(key);
+    //    int index = hashcode % this->capacity;
+    //    return searchInList(index, key);
+    //}
 
-    Bloque* get(string key)
-    {
-        size_t hashcode = getHashCode(key);
-        int index = hashcode % this->capacity;
-        return searchInList(index, key);
-
-        //Bloque<Transaccion>* bloque = searchInList(index, key);
-        //if ( bloque != nullptr){return result; }
-        //else{ return nullptr; }
-    }
-
-    void mostrarTransacciones()
-    {
-        for (int i = 0; i < capacity; ++i) {
-            cout << endl << "Lista" << endl;
+    void mostrarTransacciones(){
+        for (int i = 0; i < capacity; ++i) 
             for (auto bloque : this->array[i]) {
-                cout << "--------------------------------------" << endl;
-                cout<<"\tBloque " << bloque.getIndex()<< endl;
-                cout << "\tKey: " << bloque.getKey() << endl;
-                cout << "--------------------------------------" << endl;
-                cout << "\tTransacciones" << endl;
+                cout << "--------------------------------------\n";
+                cout << "\nBloque #" << bloque.getIndex();
+                cout << "\tKey: " << bloque.getKey();
+                cout << "\nTransacciones:\n";
+                cout << "----------------\n";
                 cout << bloque.mostrarTransacciones() << endl;
             }
-            cout << endl;
-        }
     }
 
     float bucket_count()
@@ -117,8 +131,22 @@ public:
     }
 
     Bloque retornarBloque(string key) {
-        int index = getHashCode(key) % capacity;
-        return array->_find(index)->data;
+        size_t hashcode = getHashCode(key);
+        int index = hashcode % capacity;
+        Bloque temp = searchInList(index, key);
+        return temp;
+    }
+        
+    Bloque searchInList(int index, string key)
+    {
+        int tamanio = array[index].size();
+        tamanio;
+        for (auto it = array[index].begin(); it != array[index].end(); ++it) {
+            *it;
+            if ((*it).key == key) {
+                return *it;
+            }
+        }
     }
 
 private:
@@ -134,6 +162,7 @@ private:
 
         //for (int i = 0; i < this->capacity; ++i)
         //{
+        // 
         //    for (auto iter = this->array[i].begin(); iter != this->array[i].end(); ++iter)
         //    {
         //        if (!iter->isEmpty())
@@ -144,8 +173,6 @@ private:
         //        }
         //    }
         //}
-
-
 
         setCapacity(this->capacity * 2);
         delete[] array;
